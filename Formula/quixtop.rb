@@ -98,27 +98,35 @@ class Quixtop < Formula
 
   def caveats
     <<~EOS
-      The engine needs its own config before it will start. Pair it with your account:
+      Pair this machine with your strm account — the code is in strm's Hub, on the
+      Telegram or Gmail row:
 
-        quixtop --help
+        quixtop pair <CODE>
+
+      Then start it. It runs in the BACKGROUND and gives the terminal back:
+
+        quixtop            start          quixtop status     is it running?
+        quixtop stop       stop           quixtop update     get a newer build
 
       State (session files) is kept in:
-        ~/Library/Application Support/quix        (macOS)
-        ~/.local/share/quix                       (Linux)
+        ~/Library/Application Support/quixtop     (macOS)
+        ~/.local/share/quixtop                    (Linux)
 
-      Override with QUIX_DATA_DIR if you want it elsewhere.
+      Override with QUIX_DATA_DIR if you want it elsewhere. An engine paired before
+      the 28Aug26 rename keeps reading its old `quix` directory, so nothing is lost.
 
       This binary is unsigned. Installing through brew is what keeps macOS from
       quarantining it — downloading the same file in a browser will not work.
 
-      To run it in the background (and at login), AFTER pairing:
-        brew services start quixtop
-        brew services stop quixtop
+      `quixtop` already backgrounds itself, so you do NOT need brew services. Use it
+      only if you also want the engine to come back automatically after a reboot:
+        brew services start quixtop      (runs `quixtop -fg` under launchd)
         tail -f #{var}/log/quixtop.log
 
-      ⚠️ Pair FIRST. launchd restarts on any non-clean exit and cannot single out the
-      "not configured" one, so starting the service before pairing just relaunches
-      that message on a throttle.
+      ⚠️ Pair FIRST. launchd restarts anything that exits non-cleanly and cannot single
+      out the "not configured" one, so starting the service before pairing just
+      relaunches that message on a throttle.
+      ⚠️ Do not use BOTH `quixtop` and `brew services` — that is two engines.
 
       ⚠️ Run it on ONE machine. The hub allows a single live engine per account —
       starting a second displaces the first, which is a click you should make
