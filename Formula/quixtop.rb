@@ -12,7 +12,7 @@
 # everywhere else — SSRF guards at 21 call sites, sealed keys at rest, a refusal to dial cleartext.
 #
 # ⚠️ Publishable once the release exists: hashes are real (28Aug26); the URLs resolve after the
-# release. Hashes below are FILLED from the generated SHA256SUMS-0.1.0.txt (28Aug26) — never
+# release. Hashes below are FILLED from the version's generated SHA256SUMS-<version>.txt — never
 # hand-transcribed from a separate shasum run.
 #
 # ⚠️ THE ORG IS `quixtop`, NOT `slashlabs` (owner 27Aug26). `slashlabs.cc` is a REALM — a domain the
@@ -35,17 +35,17 @@
 class Quixtop < Formula
   desc "Local engine for quix — Telegram and Gmail for the strm web client"
   homepage "https://quixtop.com"
-  version "0.1.1"
+  version "0.1.2"
   license "MIT"
 
   on_macos do
     on_arm do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-darwin-arm64"
-      sha256 "73fcaa650be59b7839c6c56dc73267fc70654ec3747a8263441656d2cf85b765"
+      sha256 "db793a324f0b0931bed9da0b6e1c93f4a44a3c3b034f38c3201ac3ca8c086380"
     end
     on_intel do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-darwin-x64"
-      sha256 "6dcbf44c0dc4c0036890b07d5d888c0c6ede915745e8b506af66f6016775cf6d"
+      sha256 "a4ba74ee4a3ef584ee169bcdcf28d5936cae5dcdc529cd6cf2a4b7e961226ff8"
     end
   end
 
@@ -58,11 +58,11 @@ class Quixtop < Formula
   on_linux do
     on_arm do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-linux-arm64"
-      sha256 "27f367587c76c2fb75ae526b3e894d30ba4fddfc6b8c29782137e562790d8241"
+      sha256 "e5f299058e6f3d645669e4a02e8c010d3bf272781bc3c81f01948df6124fa90b"
     end
     on_intel do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-linux-x64"
-      sha256 "073dac5cf80a068732db8b9ea9fd371f00972f1a1fc3d8d2944f6ded0fd0deae"
+      sha256 "4549c76455acfccf56980402521b85cfd782436a7fb8422e6c528db5a3722244"
     end
   end
 
@@ -106,7 +106,7 @@ class Quixtop < Formula
       Then start it. It runs in the BACKGROUND and gives the terminal back:
 
         quixtop            start          quixtop status     is it running?
-        quixtop stop       stop           quixtop update     get a newer build
+        quixtop stop       stop           brew upgrade quixtop    get a newer build
 
       State (session files) is kept in:
         ~/Library/Application Support/quixtop     (macOS)
@@ -135,11 +135,12 @@ class Quixtop < Formula
   end
 
   test do
-    # ⚠️ Asserts it STARTS and reaches its own config check, not that it connects: a test that needs
-    # Telegram credentials cannot run in Homebrew's CI, and one that needs the network is flaky by
-    # construction. Reaching "missing env" proves the binary loaded and its runtime is intact —
-    # which is the exact failure mode a bad cross-compile produces.
-    output = shell_output("#{bin}/quixtop 2>&1", 1)
-    assert_match "missing env", output
+    # ⚠️ `version` is the ONE deterministic command: bare `quixtop` now self-daemonizes — non-TTY
+    # skips the pair prompt, the child dies on config, and the parent prints the FRIENDLY line
+    # (the raw "missing env" never reaches output) — and on a machine where anything answers :8080
+    # it exits 0, so asserting on the daemon path fails somewhere on every real setup. Printing the
+    # version still proves the cross-compiled binary loads and its runtime is intact, which is the
+    # failure mode a bad cross-compile produces.
+    assert_match version.to_s, shell_output("#{bin}/quixtop version")
   end
 end
