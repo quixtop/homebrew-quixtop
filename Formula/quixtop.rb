@@ -21,7 +21,7 @@
 #
 # ⚠️ The tap repo MUST carry the `homebrew-` prefix: `github.com/quixtop/homebrew-quixtop`.
 # brew derives the repo name from the tap name by adding it, so a repo called plain `quixtop`
-# is invisible to `brew tap quixtop/quixtop && brew install quixtop`.
+# is invisible to `brew tap quixtop/quixtop && brew trust quixtop/quixtop && brew install quixtop`.
 #
 # ⚠️ RELEASES ARE HOSTED IN THE TAP REPO ITSELF, deliberately. The code lives in shrix/quixtop, and
 # pointing the formula there would mean a second repo, a second release process, and a public
@@ -31,21 +31,21 @@
 # To publish: create `github.com/quixtop/homebrew-quixtop`, drop this file in as
 # `Formula/quixtop.rb`, attach the binaries from `bin/quix engine-build` to a release there,
 # and fill in the hashes from the generated SHA256SUMS file. Then:
-#     brew tap quixtop/quixtop && brew install quixtop
+#     brew tap quixtop/quixtop && brew trust quixtop/quixtop && brew install quixtop
 class Quixtop < Formula
   desc "Local engine for quix — Telegram and Gmail for the strm web client"
   homepage "https://quixtop.com"
-  version "0.1.0"
+  version "0.1.1"
   license "MIT"
 
   on_macos do
     on_arm do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-darwin-arm64"
-      sha256 "db026007ba78c2f9cc90c174229bc70e90a43ccd3912c7fa4ff36c198ad8f360"
+      sha256 "3dd61d345cce75be43c098782c873f4bb5e67cb947c0fddffa5dfdab337f1ca5"
     end
     on_intel do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-darwin-x64"
-      sha256 "e08d32a8ade943012dff9baa5dd817f09bc53f91467260a1db3c06093f1939f0"
+      sha256 "c8e14e95d2a4b35e6f207a0e27d28da8d0bb67c5cef7eacb41c98595b35f91d1"
     end
   end
 
@@ -58,11 +58,11 @@ class Quixtop < Formula
   on_linux do
     on_arm do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-linux-arm64"
-      sha256 "e66a515f12a416eaa8c0de1527585d0caf8820177cba62d47541e567a5a1bf32"
+      sha256 "4fe2807c45426ac32d040669538bda4b37aba1c94121e6c93877b78ed7b44345"
     end
     on_intel do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-linux-x64"
-      sha256 "553ff893bf3d552e47e91af238759b62af4b6bd19fd4d2f728f3cb109f504b3d"
+      sha256 "0a66c1377b321499369fa57ceb85a2cf8ff3d2987f88a2ad2fa9808376357fc7"
     end
   end
 
