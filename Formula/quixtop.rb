@@ -1,0 +1,137 @@
+# Homebrew formula for the strm engine.
+#
+# ⚠️ THIS IS THE DISTRIBUTION DECISION, not a convenience wrapper (27Aug26). The engine binary is
+# UNSIGNED and un-notarized. macOS attaches a quarantine attribute to anything a BROWSER downloads,
+# and Gatekeeper then refuses to run it — so a plain "download the binary" link is broken on every
+# Mac unless we buy an Apple Developer account and build a notarization pipeline. `brew` fetches
+# over curl, which sets no quarantine attribute, so the same file installs and runs untouched.
+# That is why distribution goes through a tap rather than a release link or `curl | sh`.
+#
+# ⚠️ `curl | sh` was considered and REJECTED. It solves nothing Gatekeeper-wise (the script still has
+# to place a binary), and piping a remote script into a shell contradicts what this project enforces
+# everywhere else — SSRF guards at 21 call sites, sealed keys at rest, a refusal to dial cleartext.
+#
+# ⚠️ Publishable once the release exists: hashes are real (28Aug26); the URLs resolve after the
+# release. Hashes below are FILLED from the generated SHA256SUMS-0.1.0.txt (28Aug26) — never
+# hand-transcribed from a separate shasum run.
+#
+# ⚠️ THE ORG IS `quixtop`, NOT `slashlabs` (owner 27Aug26). `slashlabs.cc` is a REALM — a domain the
+# workers serve — and has never been a GitHub org; the two are unrelated and an install line naming
+# the wrong one fails with brew's least helpful error ("no available formula").
+#
+# ⚠️ The tap repo MUST carry the `homebrew-` prefix: `github.com/quixtop/homebrew-quixtop`.
+# brew derives the repo name from the tap name by adding it, so a repo called plain `quixtop`
+# is invisible to `brew tap quixtop/quixtop && brew install quixtop`.
+#
+# ⚠️ RELEASES ARE HOSTED IN THE TAP REPO ITSELF, deliberately. The code lives in shrix/quixtop, and
+# pointing the formula there would mean a second repo, a second release process, and a public
+# download URL under a personal account rather than the product's org. One repo holds the formula
+# and the binaries it pins; there is nothing to keep in step across two.
+#
+# To publish: create `github.com/quixtop/homebrew-quixtop`, drop this file in as
+# `Formula/quixtop.rb`, attach the binaries from `bin/quix engine-build` to a release there,
+# and fill in the hashes from the generated SHA256SUMS file. Then:
+#     brew tap quixtop/quixtop && brew install quixtop
+class Quixtop < Formula
+  desc "Local engine for quix — Telegram and Gmail for the strm web client"
+  homepage "https://quixtop.com"
+  version "0.1.0"
+  license "MIT"
+
+  on_macos do
+    on_arm do
+      url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-darwin-arm64"
+      sha256 "db026007ba78c2f9cc90c174229bc70e90a43ccd3912c7fa4ff36c198ad8f360"
+    end
+    on_intel do
+      url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-darwin-x64"
+      sha256 "e08d32a8ade943012dff9baa5dd817f09bc53f91467260a1db3c06093f1939f0"
+    end
+  end
+
+  # ⚠️ ARCH-BRANCHED, like macOS. brew is the MAC path by decision (Linux/Windows use the direct
+  # download), but Homebrew does run on Linux and an unbranched block would hand a Raspberry Pi the
+  # x64 binary — which fails at exec with a message that explains nothing.
+  # ⚠️ Homebrew on Linux may not support arm64 at all; if so this block simply never fires, which is
+  # harmless. It is here so that a Pi is never served the WRONG artifact, not to promise brew works
+  # there — the Pi's supported path is the direct download.
+  on_linux do
+    on_arm do
+      url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-linux-arm64"
+      sha256 "e66a515f12a416eaa8c0de1527585d0caf8820177cba62d47541e567a5a1bf32"
+    end
+    on_intel do
+      url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-linux-x64"
+      sha256 "553ff893bf3d552e47e91af238759b62af4b6bd19fd4d2f728f3cb109f504b3d"
+    end
+  end
+
+  def install
+    # The downloaded artifact keeps its platform-stamped name; install it under the plain command.
+    bin.install Dir["quixtop-*"].first => "quixtop"
+    # ⚠️ EXPLICIT +x. A raw (non-archive) download arrives 0644 — there is no tarball to carry the
+    # mode — and bin.install does not reliably add it. Without this the install "succeeds" and the
+    # first run answers `permission denied`, which reads as a broken binary rather than a mode.
+    (bin/"quixtop").chmod 0755
+  end
+
+  # ⚠️ A SERVICE BLOCK IS OPT-IN, NOT AUTO-START — and my first reading of this got it wrong. It was
+  # omitted on the reasoning that "a launchd service would start the engine at boot on every machine
+  # that installs it", which conflated HAVING the block with AUTO-STARTING: brew never starts a
+  # service on install. The block only makes `brew services start quixtop` available, which is
+  # an explicit act by the user on the machine they chose — exactly the per-device, explicit-move
+  # model the on-demand design wants. Without it, macOS (the brew platform!) had no background story
+  # at all while Linux/Pi had a systemd unit.
+  service do
+    # ⚠️ `-fg`, always. launchd supervises by watching the process it launched, and bare
+    # `quixtop` backgrounds itself — which looks like an instant crash and gets restarted
+    # forever. Most users never need this block at all: `quixtop` alone already backgrounds.
+    run [opt_bin/"quixtop", "-fg"]
+    # ⚠️ Restart on a CRASH, never on a clean exit. launchd has no RestartPreventExitStatus, so it
+    # cannot distinguish the config-failure exit (78) the way the systemd unit does — pair BEFORE
+    # starting the service, or launchd will relaunch the "not configured" message on its throttle.
+    # The caveats below say so.
+    keep_alive(successful_exit: false)
+    log_path var/"log/quixtop.log"
+    error_log_path var/"log/quixtop.log"
+  end
+
+  def caveats
+    <<~EOS
+      The engine needs its own config before it will start. Pair it with your account:
+
+        quixtop --help
+
+      State (session files) is kept in:
+        ~/Library/Application Support/quix        (macOS)
+        ~/.local/share/quix                       (Linux)
+
+      Override with QUIX_DATA_DIR if you want it elsewhere.
+
+      This binary is unsigned. Installing through brew is what keeps macOS from
+      quarantining it — downloading the same file in a browser will not work.
+
+      To run it in the background (and at login), AFTER pairing:
+        brew services start quixtop
+        brew services stop quixtop
+        tail -f #{var}/log/quixtop.log
+
+      ⚠️ Pair FIRST. launchd restarts on any non-clean exit and cannot single out the
+      "not configured" one, so starting the service before pairing just relaunches
+      that message on a throttle.
+
+      ⚠️ Run it on ONE machine. The hub allows a single live engine per account —
+      starting a second displaces the first, which is a click you should make
+      deliberately in strm's Devices panel, not by leaving two services running.
+    EOS
+  end
+
+  test do
+    # ⚠️ Asserts it STARTS and reaches its own config check, not that it connects: a test that needs
+    # Telegram credentials cannot run in Homebrew's CI, and one that needs the network is flaky by
+    # construction. Reaching "missing env" proves the binary loaded and its runtime is intact —
+    # which is the exact failure mode a bad cross-compile produces.
+    output = shell_output("#{bin}/quixtop 2>&1", 1)
+    assert_match "missing env", output
+  end
+end
