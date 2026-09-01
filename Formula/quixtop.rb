@@ -10,6 +10,11 @@
 # ⚠️ `curl | sh` was considered and REJECTED. It solves nothing Gatekeeper-wise (the script still has
 # to place a binary), and piping a remote script into a shell contradicts what this project enforces
 # everywhere else — SSRF guards at 21 call sites, sealed keys at rest, a refusal to dial cleartext.
+# ⚠️ A `setup.sh` WRAPPER was explored and declined too (owner 29Aug26): fetching the script is a
+# step the one-paste hub line does not have, the script cannot know the user's pairing code (the
+# hub bakes it into the paste), and hiding the five commands in a file trades auditability for
+# nothing. The genuine next rung down is a notarized .pkg/cask — an Apple Developer account
+# question, not a script one.
 #
 # ⚠️ Publishable once the release exists: hashes are real (28Aug26); the URLs resolve after the
 # release. Hashes below are FILLED from the version's generated SHA256SUMS-<version>.txt — never
@@ -35,17 +40,17 @@
 class Quixtop < Formula
   desc "Local engine for quix — Telegram and Gmail for the strm web client"
   homepage "https://quixtop.com"
-  version "0.1.2"
+  version "0.1.3"
   license "MIT"
 
   on_macos do
     on_arm do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-darwin-arm64"
-      sha256 "db793a324f0b0931bed9da0b6e1c93f4a44a3c3b034f38c3201ac3ca8c086380"
+      sha256 "9a9a48238e34e944ba2685d622cfcabd62dd796dde0bd8811440528182d7ee8f"
     end
     on_intel do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-darwin-x64"
-      sha256 "a4ba74ee4a3ef584ee169bcdcf28d5936cae5dcdc529cd6cf2a4b7e961226ff8"
+      sha256 "434ae2250ac58422046a2e27611ea52095dbfc6ee44e66d299c189d600e747c7"
     end
   end
 
@@ -58,11 +63,11 @@ class Quixtop < Formula
   on_linux do
     on_arm do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-linux-arm64"
-      sha256 "e5f299058e6f3d645669e4a02e8c010d3bf272781bc3c81f01948df6124fa90b"
+      sha256 "6b2f97de7ff20e8f6900ce8dcb83a39a86f9986cb8ebd87b3af59080bf4c85a4"
     end
     on_intel do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quixtop-#{version}-linux-x64"
-      sha256 "4549c76455acfccf56980402521b85cfd782436a7fb8422e6c528db5a3722244"
+      sha256 "1ac9cbd41bbcacd09a1fa43f34c996aef9dfa0e33935854b4a20011f2940fdae"
     end
   end
 
@@ -118,14 +123,19 @@ class Quixtop < Formula
       This binary is unsigned. Installing through brew is what keeps macOS from
       quarantining it — downloading the same file in a browser will not work.
 
-      `quixtop` already backgrounds itself, so you do NOT need brew services. Use it
-      only if you also want the engine to come back automatically after a reboot:
+      RECOMMENDED: run it as a service, so it comes back after every reboot
+      (owner 29Aug26 — without this, a restart leaves the engine off until you
+      notice "Engine offline" in strm):
         brew services start quixtop      (runs `quixtop -fg` under launchd)
         tail -f #{var}/log/quixtop.log
+      A bare `quixtop` still works for a one-off run — it backgrounds itself.
 
       ⚠️ Pair FIRST. launchd restarts anything that exits non-cleanly and cannot single
       out the "not configured" one, so starting the service before pairing just
-      relaunches that message on a throttle.
+      relaunches that message on a throttle. The same applies to a SESSION_KEY that
+      cannot open the stored sessions — the engine refuses to start until the key is
+      restored (or the session files removed), and the service would relaunch that
+      refusal on the same throttle. Run `quixtop` by hand first; it prints the reason.
       ⚠️ Do not use BOTH `quixtop` and `brew services` — that is two engines.
 
       ⚠️ Run it on ONE machine. The hub allows a single live engine per account —
