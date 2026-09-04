@@ -34,23 +34,23 @@
 # and the binaries it pins; there is nothing to keep in step across two.
 #
 # To publish: create `github.com/quixtop/homebrew-quixtop`, drop this file in as
-# `Formula/quix.rb`, attach the binaries from `bin/quix engine-build` to a release there,
+# `Formula/quix.rb`, attach the binaries from `bin/worx engine-build` to a release there,
 # and fill in the hashes from the generated SHA256SUMS file. Then:
 #     brew tap quixtop/quixtop; brew trust quixtop/quixtop; brew install quix
 class Quix < Formula
   desc "Local engine for quix — Telegram and Gmail for the strm web client"
   homepage "https://quix.com"
-  version "0.2.1"
+  version "0.2.2"
   license "MIT"
 
   on_macos do
     on_arm do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-darwin-arm64"
-      sha256 "75a232eb38c50a003243d261586067e5a4e74e2dd3867fc91a1b1bf6a889f673"
+      sha256 "6a110f74865cee03de40f1767dbbec41f25eacd740ef6b8888fffab0ae8852de"
     end
     on_intel do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-darwin-x64"
-      sha256 "a7e956001ea7419206389ad3f78ba8524e115e19c9002de9a783737a58d1e504"
+      sha256 "96e5d90013ef27429bcc353481906d4d15b4f78d852778ec29800432fadad514"
     end
   end
 
@@ -63,11 +63,11 @@ class Quix < Formula
   on_linux do
     on_arm do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-linux-arm64"
-      sha256 "8ba0cfc1b2c79cd6dd3fac860d2655fa3ae2b293cc644afb1c2dc35452c6c7b1"
+      sha256 "42334474870b210e7535e567f6163924a8cced3b64d0dc1ae973c26ce430e937"
     end
     on_intel do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-linux-x64"
-      sha256 "d01f17c0ce37680ed543a1d674e71a0f0f89a6e0205bf58f72420924e5df9467"
+      sha256 "89d88c60044f4a99748000d2a1f11606d4053827fe8144cf40a62dfde7d554f0"
     end
   end
 
