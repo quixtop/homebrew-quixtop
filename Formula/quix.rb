@@ -20,7 +20,7 @@
 # release. Hashes below are FILLED from the version's generated SHA256SUMS-<version>.txt — never
 # hand-transcribed from a separate shasum run.
 #
-# ⚠️ THE ORG IS `quix`, NOT `slashlabs` (owner 27Aug26). `slashlabs.cc` is a REALM — a domain the
+# ⚠️ THE ORG IS `quixtop`, NOT `slashlabs` (owner 27Aug26; the URLs below). `slashlabs.cc` is a REALM — a domain the
 # workers serve — and has never been a GitHub org; the two are unrelated and an install line naming
 # the wrong one fails with brew's least helpful error ("no available formula").
 #
@@ -39,18 +39,18 @@
 #     brew tap quixtop/quixtop; brew trust quixtop/quixtop; brew install quix
 class Quix < Formula
   desc "Local engine for quix — Telegram and Gmail for the strm web client"
-  homepage "https://quix.com"
-  version "0.2.11"
+  homepage "https://quixtop.com"
+  version "0.2.12"
   license "MIT"
 
   on_macos do
     on_arm do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-darwin-arm64"
-      sha256 "92c5274f522c8ac475eb63fce54d2b0bca69a9eceba53bb5f278a5c352642f39"
+      sha256 "90e7ec039b1b355895ffad016e3d7f03822990fdf829596e32427950f4fa34ba"
     end
     on_intel do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-darwin-x64"
-      sha256 "f853c30f67143ad66bb4825d6be52c109a66832c7fd533aae3968a9288ebef7e"
+      sha256 "b9aa78b6f92a04a5053c625c7f3e38de17739f87cb48e80158f649bcf811cd5f"
     end
   end
 
@@ -63,11 +63,11 @@ class Quix < Formula
   on_linux do
     on_arm do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-linux-arm64"
-      sha256 "0acec8176f4c3f96d232bd81229cca968d4c492029c22b4428bea112ea1f4cd5"
+      sha256 "f91370fa8e6fc6283803480922a7d3ea19c77283c39ed520228e1734d71ae8e1"
     end
     on_intel do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-linux-x64"
-      sha256 "d8e9dab7d80c79df931d92242bd239c8eed11fe57fbd23fd34d53d758e8488b0"
+      sha256 "821ffa6a1c650b167bdec93021380a0e4b92adbaa6f8866166908d9cb8d75de0"
     end
   end
 
