@@ -40,17 +40,17 @@
 class Quix < Formula
   desc "Local engine for quix — Telegram and Gmail for the strm web client"
   homepage "https://quixtop.com"
-  version "0.2.15"
+  version "0.2.16"
   license "MIT"
 
   on_macos do
     on_arm do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-darwin-arm64"
-      sha256 "17a65179fd57afc4630ad5c80e4bd371dbda24a5bc8f1a8ae259a3ef0e95a413"
+      sha256 "21a3158d10c408a3fecf1c6513886f5d11f4ab2f4b2e2255adb5a9c9163459dc"
     end
     on_intel do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-darwin-x64"
-      sha256 "0ff6a536d3a8a06ce5e88337b6e63c386799367d9f4dac77d754e18d3bde3ee6"
+      sha256 "8b39bf4106932f016ee88e1a7fc4abd8652a35ee53cd5e059d0a3ead9a9a138c"
     end
   end
 
@@ -63,11 +63,11 @@ class Quix < Formula
   on_linux do
     on_arm do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-linux-arm64"
-      sha256 "f77805137db1b9c5753a38c54dc113cf0c0d357303e90b62a3b5ed8ebab4316b"
+      sha256 "78c23e5d03bf871dfa3c7f9a86d33cf54f20be29235e2e2ebeca7055cc12a95c"
     end
     on_intel do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-linux-x64"
-      sha256 "a6ac4720e038c76ae45565471284ac8dcd9df846d1436037a83f4134ee498abd"
+      sha256 "9c178427ac70bd505e41d47cbd3b008c5b0d02a7a9e4a7014338281907ad12cc"
     end
   end
 
