@@ -40,7 +40,7 @@
 class Quix < Formula
   desc "Local engine for quix — Telegram and Gmail for the strm web client"
   homepage "https://quixtop.com"
-  version "0.2.20"
+  version "0.2.21"
   license "MIT"
 
   # xuni reads NotebookLM through the engine with `notebooklm-py`, which the engine installs into its own environment
@@ -50,11 +50,11 @@ class Quix < Formula
   on_macos do
     on_arm do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-darwin-arm64"
-      sha256 "b79363bc07e20ad00a0a8551e5a4799c4650e348e8255405f238301fcb1f3965"
+      sha256 "868cdeb3fc1cb577ab8e6d22a919c6ea6ed282a232fd5c2aca22c35c97209f3a"
     end
     on_intel do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-darwin-x64"
-      sha256 "c71ee31f46b704340cc16d0b84e79097d9c43b526f7d1f39f534a3ec61929ed7"
+      sha256 "8e581b66f018556c26766f5c308bb68075d9e8191a42cf493546db59de211df4"
     end
   end
 
@@ -67,11 +67,11 @@ class Quix < Formula
   on_linux do
     on_arm do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-linux-arm64"
-      sha256 "e6e4984211ed92c81ea8855b025352f3001499b0f8b8a612faa6e2526a716a73"
+      sha256 "a312a6246537fb6ac12772819e630d646688735fe3e5eaf73935e798f44b95d9"
     end
     on_intel do
       url "https://github.com/quixtop/homebrew-quixtop/releases/download/v#{version}/quix-#{version}-linux-x64"
-      sha256 "9d12aecb2813108626846f702475431be887bbe81f34e6b512cd88eceae37097"
+      sha256 "2432569559e7ed61ff6af1c16040aef4eed932afa51215f694de3de44349e8a1"
     end
   end
 
