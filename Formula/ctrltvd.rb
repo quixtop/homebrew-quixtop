@@ -25,8 +25,8 @@
 class Ctrltvd < Formula
   desc "Mac companion for ctrlTV — pairs with your Android TV and serves its dashboard"
   homepage "https://ctrl.quixtop.com"
-  url "https://github.com/quixtop/homebrew-quixtop/releases/download/ctrltv-v0.1.3/ctrltvd-0.1.3.tar.gz"
-  sha256 "580d530e2c2682a33c03aa188180e9194d200456b0f8de2f320524744d362049"
+  url "https://github.com/quixtop/homebrew-quixtop/releases/download/ctrltv-v0.1.4/ctrltvd-0.1.4.tar.gz"
+  sha256 "3b3c15519c98d5c83e0f2141d53c3c015fefd2ab2b09b938cece8e91d450080e"
 
   # The screen reader's OCR is Apple's Vision framework (pyobjc): a Linux brew is refused here, not at the first sync.
   depends_on :macos
